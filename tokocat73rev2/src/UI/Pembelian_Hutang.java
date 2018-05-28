@@ -364,9 +364,7 @@ public final class Pembelian_Hutang extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_totalKeyPressed
 
     private void chk_pilihSemuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chk_pilihSemuaActionPerformed
-        System.out.println("Checked");
         selectAll();
-
     }//GEN-LAST:event_chk_pilihSemuaActionPerformed
 
     private void tbl_pembelianHutangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_pembelianHutangMouseClicked

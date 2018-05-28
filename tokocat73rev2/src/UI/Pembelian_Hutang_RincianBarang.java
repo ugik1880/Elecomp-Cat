@@ -70,7 +70,7 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
 
                     sqlB = "INSERT INTO transaksi_master values ("
                             + null + ",'" + fakturBP + "','','" + noFaktur[i] + "','" + sdf.format(cal.getTime()) + "'"
-                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + keuangan1 + "'"
+                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + com_bank1.getSelectedIndex() + 1 + "'"
                             + ",'0','0','0000-00-00 00:00:00','0000-00-00')";
                 } else {
                     sqlA = "update pembelian SET tgl_bg = '"
@@ -138,75 +138,61 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
     }
 
     public void bank() {
-        int keuangan1 = 1;
-        int keuangan2 = 1;
-        switch (com_keuangan_1.getSelectedIndex()) {
-            case 0:
-                keuangan1 = 1;
-                break;
-            case 1:
-                keuangan1 = 2;
-                break;
-            case 2:
-                keuangan1 = 3;
-                break;
-            case 3:
-                keuangan1 = 4;
-                break;
-            case 4:
-                keuangan1 = 5;
-                break;
-            default:
-                break;
-        }
-        switch (com_keuangan_2.getSelectedIndex()) {
-            case 0:
-                keuangan2 = 1;
-                break;
-            case 1:
-                keuangan2 = 2;
-                break;
-            case 2:
-                keuangan2 = 3;
-                break;
-            case 3:
-                keuangan2 = 4;
-                break;
-            case 4:
-                keuangan2 = 5;
-                break;
-            default:
-                break;
-        }
-        this.keuangan1 = keuangan1;
-        this.keuangan2 = keuangan2;
-    }
-
-    public void fakturBP() {
+        String sql = "select nama_keuangan "
+                + "from transaksi_nama_keuangan";
         try {
-            String sql = "select faktur_bp, kode_transaksi_master from transaksi_master "
-                    + "WHERE faktur_bp LIKE 'BP%' ORDER BY kode_transaksi_master desc LIMIT 1";
             Connection conn = (Connection) Koneksi.configDB();
             Statement stm = conn.createStatement();
             ResultSet res = stm.executeQuery(sql);
-            while (res.next()) {
-                if (res.first() == false) {
-                    System.out.println("BP18-1");
 
-                } else {
-                    res.last();
-                    String auto_num = res.getString(1);
-                    String huruf = String.valueOf(auto_num.substring(0, 5));
-                    int angka = Integer.valueOf(auto_num.substring(5)) + 1;
-                    this.fakturBP = huruf + angka;
-                    System.out.println(this.fakturBP);
-                }
+            while (res.next()) {
+                com_bank1.addItem(res.getString("nama_keuangan"));
+                com_bank2.addItem(res.getString("nama_keuangan"));
             }
-            res.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fakturBP() {
+        String lastNo = "";
+        try {
+            String sql = "select faktur_bp from transaksi_master"
+                    + " WHERE faktur_bp LIKE 'BP%' ORDER BY faktur_bp desc LIMIT 1";
+            Connection conn = (Connection) Koneksi.configDB();
+            Statement stm = conn.createStatement();
+            ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                String nomor = res.getString("faktur_bp");
+                if (nomor.substring(2, 4).equalsIgnoreCase(year)) {
+                    int noLama = Integer.parseInt(nomor.substring(nomor.length() - 5));
+                    noLama++;
+                    String no = Integer.toString(noLama);
+                    if (no.length() == 1) {
+                        no = "0000" + no;
+                    } else if (no.length() == 2) {
+                        no = "000" + no;
+                    } else if (no.length() == 3) {
+                        no = "00" + no;
+                    } else if (no.length() == 3) {
+                        no = "0" + no;
+                    }
+                    lastNo = no;
+                } else {
+                    lastNo = "00001";
+                }
+
+            } else {
+                lastNo = "00001";
+            }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "ERROR: \n" + ex.toString(),
                     "Kesalahan", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
         }
+        this.fakturBP = "BP" + year + "-" + lastNo;
+
+        System.out.println("Faktur BP = " + fakturBP);
     }
 
     public void fakturBB() {
@@ -245,6 +231,8 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
                     "Kesalahan", JOptionPane.WARNING_MESSAGE);
         }
         this.fakturBB = "BB" + year + "-" + lastNo;
+
+        System.out.println("Faktur BB = " + fakturBB);
     }
 
     /**
@@ -271,11 +259,11 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
         jLabel37 = new javax.swing.JLabel();
         jLabel41 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
-        com_keuangan_2 = new javax.swing.JComboBox<>();
+        com_bank2 = new javax.swing.JComboBox<>();
         txt_bayar2 = new javax.swing.JTextField();
         txt_bayar = new javax.swing.JTextField();
         jLabel39 = new javax.swing.JLabel();
-        com_keuangan_1 = new javax.swing.JComboBox<>();
+        com_bank1 = new javax.swing.JComboBox<>();
         jLabel38 = new javax.swing.JLabel();
         jLabel31 = new javax.swing.JLabel();
         txt_blmBayar = new javax.swing.JTextField();
@@ -338,10 +326,9 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
 
         jLabel40.setText("Keuangan 2");
 
-        com_keuangan_2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BCA | 1", "MANDIRI | 2", "BRI | 3", "CAT73 | 4", "TOKO CAT73 | 5" }));
-        com_keuangan_2.addActionListener(new java.awt.event.ActionListener() {
+        com_bank2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                com_keuangan_2ActionPerformed(evt);
+                com_bank2ActionPerformed(evt);
             }
         });
 
@@ -359,10 +346,9 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
 
         jLabel39.setText("Bayar");
 
-        com_keuangan_1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BCA | 1", "MANDIRI | 2", "BRI | 3", "CAT73 | 4", "TOKO CAT73 | 5" }));
-        com_keuangan_1.addActionListener(new java.awt.event.ActionListener() {
+        com_bank1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                com_keuangan_1ActionPerformed(evt);
+                com_bank1ActionPerformed(evt);
             }
         });
 
@@ -418,9 +404,9 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
                                     .addComponent(txt_bayar, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                                     .addComponent(txt_ket, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                                     .addComponent(txt_bayar2, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                                    .addComponent(com_keuangan_1, 0, 210, Short.MAX_VALUE)
+                                    .addComponent(com_bank1, 0, 210, Short.MAX_VALUE)
                                     .addComponent(txt_noSeriBG, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
-                                    .addComponent(com_keuangan_2, 0, 210, Short.MAX_VALUE)
+                                    .addComponent(com_bank2, 0, 210, Short.MAX_VALUE)
                                     .addComponent(cal_tglBG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(txt_potongan, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)))
                             .addGroup(jPanel11Layout.createSequentialGroup()
@@ -464,7 +450,7 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
                     .addComponent(txt_potongan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(com_keuangan_1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(com_bank1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel38))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -472,7 +458,7 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
                     .addComponent(jLabel39))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(com_keuangan_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(com_bank2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel40))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -547,13 +533,13 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_com_jenisBGActionPerformed
 
-    private void com_keuangan_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_keuangan_1ActionPerformed
-        bank();
-    }//GEN-LAST:event_com_keuangan_1ActionPerformed
+    private void com_bank1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank1ActionPerformed
 
-    private void com_keuangan_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_keuangan_2ActionPerformed
-        bank();
-    }//GEN-LAST:event_com_keuangan_2ActionPerformed
+    }//GEN-LAST:event_com_bank1ActionPerformed
+
+    private void com_bank2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank2ActionPerformed
+
+    }//GEN-LAST:event_com_bank2ActionPerformed
 
     /* @param args the command line arguments
      */
@@ -595,9 +581,9 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
     private javax.swing.JButton btn_bayar;
     private javax.swing.JButton btn_close;
     private com.toedter.calendar.JDateChooser cal_tglBG;
+    private javax.swing.JComboBox<String> com_bank1;
+    private javax.swing.JComboBox<String> com_bank2;
     private javax.swing.JComboBox<String> com_jenisBG;
-    private javax.swing.JComboBox<String> com_keuangan_1;
-    private javax.swing.JComboBox<String> com_keuangan_2;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel34;

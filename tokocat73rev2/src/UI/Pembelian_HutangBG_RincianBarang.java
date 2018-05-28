@@ -5,20 +5,28 @@
  */
 package UI;
 
+import Class.Koneksi;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 /**
  *
  * @author 7
  */
-public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
+public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
 
     private int totalHutang = 0;
     private int jumFaktur = 0;
     private String[] noFaktur;
     private int[] hrgItem;
+    private int bank1 = 0;
+    private int bank2 = 0;
 
     public Pembelian_HutangBG_RincianBarang() {
         initComponents();
         this.setVisible(true);
+        bank();
     }
 
     public Pembelian_HutangBG_RincianBarang(int totalHutang, int jumFaktur, String[] noFaktur, int[] hrgItem) {
@@ -54,6 +62,23 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
 
     }
 
+    public void bank() {
+        String sql = "select nama_keuangan "
+                + "from transaksi_nama_keuangan";
+        try {
+            Connection conn = (Connection) Koneksi.configDB();
+            Statement stm = conn.createStatement();
+            ResultSet res = stm.executeQuery(sql);
+
+            while (res.next()) {
+                com_bank1.addItem(res.getString("nama_keuangan"));
+                com_bank2.addItem(res.getString("nama_keuangan"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }       
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -68,7 +93,6 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
         jLabel75 = new javax.swing.JLabel();
         txt_ket = new javax.swing.JTextField();
         txt_byr_2 = new javax.swing.JTextField();
-        jComboBox7 = new javax.swing.JComboBox<>();
         jLabel70 = new javax.swing.JLabel();
         jLabel78 = new javax.swing.JLabel();
         txt_blm_byr = new javax.swing.JTextField();
@@ -76,11 +100,12 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
         jLabel83 = new javax.swing.JLabel();
         jButton19 = new javax.swing.JButton();
         jLabel81 = new javax.swing.JLabel();
-        jComboBox8 = new javax.swing.JComboBox<>();
         jLabel74 = new javax.swing.JLabel();
         jButton18 = new javax.swing.JButton();
         jSeparator11 = new javax.swing.JSeparator();
         txt_byr_1 = new javax.swing.JTextField();
+        com_bank1 = new javax.swing.JComboBox<>();
+        com_bank2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -102,8 +127,6 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
                 txt_byr_2KeyReleased(evt);
             }
         });
-
-        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BCA | 1", "MANDIRI | 2", "BRI | 3", "CAT73 | 4", "TOKO CAT73 | 5" }));
 
         jLabel70.setForeground(new java.awt.Color(51, 51, 51));
         jLabel70.setText("Belum Bayar");
@@ -129,8 +152,6 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
 
         jLabel81.setForeground(new java.awt.Color(51, 51, 51));
         jLabel81.setText("Keterangan");
-
-        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BCA | 1", "MANDIRI | 2", "BRI | 3", "CAT73 | 4", "TOKO CAT73 | 5" }));
 
         jLabel74.setForeground(new java.awt.Color(51, 51, 51));
         jLabel74.setText("Keuangan");
@@ -167,35 +188,31 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel81)
+                                    .addComponent(jLabel83))
+                                .addGap(74, 74, 74)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_ket, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButton18)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel70)
                                     .addComponent(jLabel74)
                                     .addComponent(jLabel75)
                                     .addComponent(jLabel77)
                                     .addComponent(jLabel78))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLabel70)
-                                        .addGap(70, 70, 70)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jComboBox7, 0, 205, Short.MAX_VALUE)
-                                            .addComponent(txt_blm_byr, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                                            .addComponent(jComboBox8, 0, 205, Short.MAX_VALUE)
-                                            .addComponent(txt_byr_2, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                                            .addComponent(txt_byr_1)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel81)
-                                            .addComponent(jLabel83))
-                                        .addGap(74, 74, 74)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txt_ket, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txt_kembali, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jButton18)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jButton19, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                .addGap(0, 62, Short.MAX_VALUE))))))
+                                .addGap(70, 70, 70)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txt_blm_byr, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                                    .addComponent(txt_byr_2, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                                    .addComponent(txt_byr_1)
+                                    .addComponent(com_bank1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(com_bank2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 62, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,16 +227,16 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
                     .addComponent(jLabel70))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel74))
+                    .addComponent(jLabel74)
+                    .addComponent(com_bank1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel75)
                     .addComponent(txt_byr_1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel77))
+                    .addComponent(jLabel77)
+                    .addComponent(com_bank2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel78)
@@ -298,10 +315,10 @@ public class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> com_bank1;
+    private javax.swing.JComboBox<String> com_bank2;
     private javax.swing.JButton jButton18;
     private javax.swing.JButton jButton19;
-    private javax.swing.JComboBox<String> jComboBox7;
-    private javax.swing.JComboBox<String> jComboBox8;
     private javax.swing.JLabel jLabel69;
     private javax.swing.JLabel jLabel70;
     private javax.swing.JLabel jLabel74;

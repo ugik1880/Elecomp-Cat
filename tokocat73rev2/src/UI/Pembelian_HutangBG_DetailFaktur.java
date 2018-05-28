@@ -148,7 +148,7 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
         jLabel48 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         txt_total = new javax.swing.JTextField();
-        jButton12 = new javax.swing.JButton();
+        btn_bayar = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tbl_hutangBgFaktur = new javax.swing.JTable();
         chk_pilihSemua = new javax.swing.JCheckBox();
@@ -166,11 +166,11 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
             }
         });
 
-        jButton12.setBackground(new java.awt.Color(71, 166, 227));
-        jButton12.setText("Bayar");
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
+        btn_bayar.setBackground(new java.awt.Color(71, 166, 227));
+        btn_bayar.setText("Bayar");
+        btn_bayar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
+                btn_bayarActionPerformed(evt);
             }
         });
 
@@ -218,7 +218,7 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
                             .addGroup(jPanel17Layout.createSequentialGroup()
                                 .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton12)
+                                .addComponent(btn_bayar)
                                 .addGap(18, 18, 18)
                                 .addComponent(chk_pilihSemua))
                             .addComponent(jLabel48))
@@ -235,7 +235,7 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton12)
+                    .addComponent(btn_bayar)
                     .addComponent(chk_pilihSemua))
                 .addGap(34, 34, 34)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
@@ -278,11 +278,11 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_totalActionPerformed
 
-    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+    private void btn_bayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bayarActionPerformed
         Pembelian_HutangBG_RincianBarang rb = new Pembelian_HutangBG_RincianBarang(totalHutang, jumFaktur, noFaktur, hrgItem);
         rb.setVisible(true);
         rb.setLocationRelativeTo(null);
-    }//GEN-LAST:event_jButton12ActionPerformed
+    }//GEN-LAST:event_btn_bayarActionPerformed
 
     private void chk_pilihSemuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chk_pilihSemuaActionPerformed
         selectAll();
@@ -359,8 +359,8 @@ public final class Pembelian_HutangBG_DetailFaktur extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_bayar;
     private javax.swing.JCheckBox chk_pilihSemua;
-    private javax.swing.JButton jButton12;
     private javax.swing.JLabel jLabel48;
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
