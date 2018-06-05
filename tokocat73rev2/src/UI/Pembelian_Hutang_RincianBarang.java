@@ -34,6 +34,7 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
     public Pembelian_Hutang_RincianBarang() {
         initComponents();
         this.setVisible(true);
+
     }
 
     public Pembelian_Hutang_RincianBarang(int totalHutang, int potongan, String[] noFaktur, int[] hrgItem, int jum) {
@@ -50,11 +51,10 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
 
         txt_potongan.setText("" + this.potongan);
         txt_blmBayar.setText("" + this.totalHutang);
-
+        bank();
         date();
         fakturBP();
         fakturBB();
-        bank();
 
     }
 
@@ -70,7 +70,7 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
 
                     sqlB = "INSERT INTO transaksi_master values ("
                             + null + ",'" + fakturBP + "','','" + noFaktur[i] + "','" + sdf.format(cal.getTime()) + "'"
-                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + com_bank1.getSelectedIndex() + 1 + "'"
+                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + keuangan1 + 1 + "'"
                             + ",'0','0','0000-00-00 00:00:00','0000-00-00')";
                 } else {
                     sqlA = "update pembelian SET tgl_bg = '"
@@ -80,30 +80,22 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
                             + "' , faktur_tempo_bg = '" + sdf.format(cal_tglBG.getDate())
                             + "' WHERE no_faktur_pembelian = '" + noFaktur[i] + "'";
 
-//                    sqlB = "INSERT INTO transaksi_master values ("
-//                            + null + ",'" + fakturBP + "','" + txt_noSeriBG.getText() + "','" + noFaktur[i] + "','" + sdf.format(cal.getTime()) + "'"
-//                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + keuangan1 + "'"
-//                            + ",'0','0','0000-00-00 00:00:00','0000-00-00')";
+                    sqlB = "INSERT INTO transaksi_master values ("
+                            + null + ",'" + fakturBP + "','" + txt_noSeriBG.getText() + "','" + noFaktur[i] + "','" + sdf.format(cal.getTime()) + "'"
+                            + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + keuangan1 + "'"
+                            + ",'0','0','0000-00-00 00:00:00','0000-00-00')";
                 }
 
                 Connection conn = (Connection) Koneksi.configDB();
                 Statement stat = conn.createStatement();
-
-                if (sqlB != null) {
-                    stat.executeUpdate(sqlA);
-                    stat.executeUpdate(sqlB);
-                } else {
-                    stat.executeUpdate(sqlA);
-                }
-
+                stat.executeUpdate(sqlA);
+                stat.executeUpdate(sqlB);
             }
-
             System.out.println("Jum = " + jum);
             JOptionPane.showMessageDialog(this, "Sukses");
-            dispose();
             Pembelian_Hutang a = new Pembelian_Hutang();
             a.loadTable();
-
+            dispose();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,9 +130,9 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
     }
 
     public void bank() {
-        String sql = "select nama_keuangan "
-                + "from transaksi_nama_keuangan";
         try {
+            String sql = "select nama_keuangan "
+                    + "from transaksi_nama_keuangan";
             Connection conn = (Connection) Koneksi.configDB();
             Statement stm = conn.createStatement();
             ResultSet res = stm.executeQuery(sql);
@@ -534,11 +526,13 @@ public final class Pembelian_Hutang_RincianBarang extends javax.swing.JFrame {
     }//GEN-LAST:event_com_jenisBGActionPerformed
 
     private void com_bank1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank1ActionPerformed
-
+        int bank1 = com_bank1.getSelectedIndex() + 1;
+        this.keuangan1 = bank1;
     }//GEN-LAST:event_com_bank1ActionPerformed
 
     private void com_bank2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank2ActionPerformed
-
+        int bank2 = com_bank2.getSelectedIndex() + 1;
+        this.keuangan2 = bank2;
     }//GEN-LAST:event_com_bank2ActionPerformed
 
     /* @param args the command line arguments

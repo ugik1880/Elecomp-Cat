@@ -9,6 +9,9 @@ import Class.Koneksi;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,6 +26,13 @@ public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
     private int bank1 = 0;
     private int bank2 = 0;
 
+    String fakturBP = null;
+
+    int keuangan1 = 0;
+    int keuangan2 = 0;
+
+    String year = null;
+
     public Pembelian_HutangBG_RincianBarang() {
         initComponents();
         this.setVisible(true);
@@ -35,6 +45,10 @@ public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
         this.jumFaktur = jumFaktur;
         this.noFaktur = noFaktur;
         this.hrgItem = hrgItem;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yy");
+        Calendar cal = Calendar.getInstance();
+        this.year = sdf.format(cal.getTime());
 
         txt_blm_byr.setText("" + totalHutang);
 
@@ -76,7 +90,77 @@ public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }       
+        }
+    }
+
+    public void bayar() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        try {
+            String sqlA = null, sqlB = null;
+            for (int i = 0; i < jumFaktur; i++) {
+
+                sqlA = "update pembelian SET biaya_pembayaran = 0 WHERE no_faktur_pembelian = '" + noFaktur[i] + "'";
+
+                sqlB = "INSERT INTO transaksi_master values ("
+                        + null + ",'" + fakturBP + "','','" + noFaktur[i] + "','" + sdf.format(cal.getTime()) + "'"
+                        + ",'0'," + hrgItem[i] + ",'0','0','" + txt_ket.getText() + "','" + keuangan1 + 1 + "'"
+                        + ",'0','0','0000-00-00 00:00:00','0000-00-00')";
+
+                Connection conn = (Connection) Koneksi.configDB();
+                Statement stat = conn.createStatement();
+                stat.executeUpdate(sqlA);
+                stat.executeUpdate(sqlB);
+            }
+            System.out.println("Jum = " + jumFaktur);
+            JOptionPane.showMessageDialog(this, "Sukses");
+            Pembelian_Hutang a = new Pembelian_Hutang();
+            a.loadTable();
+            dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fakturBP() {
+        String lastNo = "";
+        try {
+            String sql = "select faktur_bp from transaksi_master"
+                    + " WHERE faktur_bp LIKE 'BP%' ORDER BY faktur_bp desc LIMIT 1";
+            Connection conn = (Connection) Koneksi.configDB();
+            Statement stm = conn.createStatement();
+            ResultSet res = stm.executeQuery(sql);
+            if (res.next()) {
+                String nomor = res.getString("faktur_bp");
+                if (nomor.substring(2, 4).equalsIgnoreCase(year)) {
+                    int noLama = Integer.parseInt(nomor.substring(nomor.length() - 5));
+                    noLama++;
+                    String no = Integer.toString(noLama);
+                    if (no.length() == 1) {
+                        no = "0000" + no;
+                    } else if (no.length() == 2) {
+                        no = "000" + no;
+                    } else if (no.length() == 3) {
+                        no = "00" + no;
+                    } else if (no.length() == 3) {
+                        no = "0" + no;
+                    }
+                    lastNo = no;
+                } else {
+                    lastNo = "00001";
+                }
+
+            } else {
+                lastNo = "00001";
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "ERROR: \n" + ex.toString(),
+                    "Kesalahan", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
+        }
+        this.fakturBP = "BP" + year + "-" + lastNo;
+
+        System.out.println("Faktur BP = " + fakturBP);
     }
 
     /**
@@ -169,6 +253,18 @@ public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
         txt_byr_1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txt_byr_1KeyReleased(evt);
+            }
+        });
+
+        com_bank1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                com_bank1ActionPerformed(evt);
+            }
+        });
+
+        com_bank2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                com_bank2ActionPerformed(evt);
             }
         });
 
@@ -278,6 +374,16 @@ public final class Pembelian_HutangBG_RincianBarang extends javax.swing.JFrame {
     private void txt_byr_2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_byr_2KeyReleased
         autoSum();
     }//GEN-LAST:event_txt_byr_2KeyReleased
+
+    private void com_bank1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank1ActionPerformed
+        int bank1 = com_bank1.getSelectedIndex() + 1;
+        this.keuangan1 = bank1;
+    }//GEN-LAST:event_com_bank1ActionPerformed
+
+    private void com_bank2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_com_bank2ActionPerformed
+        int bank2 = com_bank2.getSelectedIndex() + 1;
+        this.keuangan2 = bank2;
+    }//GEN-LAST:event_com_bank2ActionPerformed
 
     /**
      * @param args the command line arguments

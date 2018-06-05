@@ -12,6 +12,8 @@ import java.util.GregorianCalendar;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JOptionPane;
 import com.sun.glass.events.KeyEvent;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -26,13 +28,13 @@ public final class Pembelian_Transaksi extends javax.swing.JFrame {
         initComponents();
         this.setVisible(true);
         AutoCompleteDecorator.decorate(comSupplier);
-        AutoCompleteDecorator.decorate(comTableBarang);      
+        AutoCompleteDecorator.decorate(comTableBarang);
         loadSupplier();
         loadComTableBarang();
         loadNumberTable();
         tanggal_jam_sekarang();
         autonumber();
-        
+
         dateChooser();
 
     }
@@ -41,12 +43,11 @@ public final class Pembelian_Transaksi extends javax.swing.JFrame {
 
         try {
             String sql = "select * from supplier";
-            java.sql.Connection conn = (Connection) Koneksi.configDB();
-            java.sql.Statement stm = conn.createStatement();
-            java.sql.ResultSet res = stm.executeQuery(sql);
+            Connection conn = (Connection) Koneksi.configDB();
+            Statement stm = conn.createStatement();
+            ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
-                String name = res.getString(2);
-                comSupplier.addItem(name);
+                comSupplier.addItem(res.getString(2));
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Eror" + e);
@@ -77,7 +78,7 @@ public final class Pembelian_Transaksi extends javax.swing.JFrame {
             tbl_Pembelian.setValueAt(nomor + ".", a, 0);
         }
     }
-   
+
     public void tanggal_jam_sekarang() {
         Thread p = new Thread() {
             public void run() {
